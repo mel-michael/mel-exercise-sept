@@ -1,12 +1,11 @@
-import React from 'react';
+import { useDataFeed } from './utils/datafeed';
+
 import './App.scss';
 
-import { useAppSelector } from './redux/store';
-
 function App() {
-  const state = useAppSelector((state) => state);
+  const { connected } = useDataFeed();
 
-  console.log('STATE', state);
+  console.log(connected, '>>>>>>>', process.env);
 
   return (
     <div className="App">
@@ -14,6 +13,7 @@ function App() {
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
+        <pre>You are {connected ? 'now' : 'NOT'} connected</pre>
       </header>
     </div>
   );
