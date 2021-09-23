@@ -1,13 +1,12 @@
 import React from 'react';
 import './App.scss';
 
-import { useAppSelector } from './redux/store'
+import { useAppSelector } from './redux/store';
 
 function App() {
+  const state = useAppSelector((state) => state);
 
-  const state = useAppSelector((state) => state)
-
-  console.log("STATE", state)
+  console.log('STATE', state);
 
   return (
     <div className="App">

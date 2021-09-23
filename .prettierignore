@@ -1,0 +1,14 @@
+# Ignore artifacts:
+build
+coverage
+
+# Ignore all HTML files:
+*.html
+
+/.git
+/.vscode
+/.idea
+node_modules
+*.log
+min.js
+min.css

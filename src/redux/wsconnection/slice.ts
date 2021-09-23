@@ -1,12 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 type WSConnectionState = {
-  connected: boolean
-}
+  connected: boolean;
+};
 
 const initialState: WSConnectionState = {
   connected: false
-}
+};
 
 export const slice = createSlice({
   name: 'wsconnection',
@@ -14,6 +14,6 @@ export const slice = createSlice({
   reducers: {
     update: (state, { payload }: { payload: Partial<WSConnectionState> }) => ({ ...state, ...payload })
   }
-})
+});
 
 export default slice.reducer;

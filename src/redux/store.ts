@@ -5,15 +5,15 @@ import wsconnectionReducer from './wsconnection/slice';
 
 const reducers = {
   wsConnection: wsconnectionReducer
-}
+};
 
-const rootReducers = combineReducers(reducers)
+const rootReducers = combineReducers(reducers);
 
 const store = configureStore({
   reducer: rootReducers
-})
+});
 
-export type RootState = ReturnType<typeof combineReducers>
+export type RootState = ReturnType<typeof combineReducers>;
 type AppDispatch = typeof store.dispatch;
 
 export const useApDispatch = () => useDispatch<AppDispatch>();
