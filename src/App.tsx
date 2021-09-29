@@ -1,15 +1,16 @@
 import { useEffect } from 'react';
 
 import { useAppDispatch, useAppSelector } from './redux/index';
-import { Contract, EventType } from './redux/orderbook/types';
+import { Contract, EventType, FeedType } from './redux/orderbook/types';
 import { update } from './redux/wsconnection/slice';
+import { upsert } from './redux/orderbook/slice';
 import { WS, initConnection } from './utils/ws';
 
 import './App.scss';
 
 const dataFeedUrl = process.env.REACT_APP_DATA_FEED;
 
-const message: Contract = { event: EventType.SUBSCRIBE, feed: 'book_ui_1', product_ids: ['PI_XBTUSD'] };
+const message: Contract = { event: EventType.SUBSCRIBE, feed: FeedType.book_ui_1, product_ids: ['PI_XBTUSD'] };
 
 function App() {
   const dispatch = useAppDispatch();
@@ -27,15 +28,13 @@ function App() {
         }
       });
     }
-  }, [connected, dispatch]);
-
-  useEffect(() => {
     if (connected) {
       WS.onmessage = (event) => {
-        console.log(`[message] Data received from server: ${event.data}`);
+        console.log(`[message] Data received from server`);
+        dispatch(upsert(event.data));
       };
     }
-  }, [connected]);
+  }, [connected, dispatch]);
 
   const sendMessage = () => {
     WS.send(JSON.stringify(message));

@@ -1,9 +1,11 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 
+import orderbookReducer from './orderbook/slice';
 import wsconnectionReducer from './wsconnection/slice';
 
 const reducers = {
-  wsconnection: wsconnectionReducer
+  orderbook: orderbookReducer,
+  wsconnection: wsconnectionReducer,
 };
 
 const rootReducers = combineReducers(reducers);
