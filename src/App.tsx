@@ -31,7 +31,10 @@ function App() {
     if (connected) {
       WS.onmessage = (event) => {
         console.log(`[message] Data received from server`);
-        dispatch(upsert(event.data));
+        const feeds = JSON.parse(event.data);
+        if (feeds.asks || feeds.bids) {
+          dispatch(upsert(feeds));
+        }
       };
     }
   }, [connected, dispatch]);

@@ -1,8 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
+import { uniqBy, sortBy } from 'lodash';
+
+import { filterPriceLevel, includeCummulative, OrderLevel } from '../../utils/book';
 
 type OrderBookState = {
-  asks: number[];
-  bids: number[];
+  asks: OrderLevel[];
+  bids: OrderLevel[];
 };
 
 const initialState: OrderBookState = {
@@ -14,15 +17,17 @@ const slice = createSlice({
   name: 'orderbook',
   initialState,
   reducers: {
-    upsert: (state, action) => {
-      console.log('Payload', action);
-      const data = JSON.parse(action.payload);
-      console.log('DaATTA', data);
+    upsert: (state, { payload }) => {
+      const formatBids = includeCummulative(filterPriceLevel(payload.bids));
+      const formatAsks = includeCummulative(filterPriceLevel(payload.asks));
+
+      const updatedAsks = uniqBy(state.asks.concat(formatAsks), ({ price }) => price);
+      const updatedBids = uniqBy(state.bids.concat(formatBids), ({ price }) => price);
 
       return {
         ...state,
-        asks: { ...state.asks, ...data.asks },
-        bids: { ...state.bids, ...data.bids }
+        asks: sortBy(updatedAsks, ({ price }) => price),
+        bids: sortBy(updatedBids, ({ price }) => price).reverse()
       };
     }
   }
