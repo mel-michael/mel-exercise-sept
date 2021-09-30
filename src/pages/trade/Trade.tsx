@@ -27,15 +27,27 @@ const Container = styled.div`
   display: flex;
   width: 100%;
 `;
+const HeaderInfo = styled.div`
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+  margin-top: 2rem;
+  & span {
+    padding: 0 1rem;
+  }
+`;
 
 const Trade = (): JSX.Element => {
-  const { asks, bids } = useAppSelector((state) => state.orderbook);
+  const { asks, bids, spread, spreadPercentage } = useAppSelector((state) => state.orderbook);
   return (
     <>
-      <div>
+      <HeaderInfo>
         <span>Order Book</span>
-        <span>Spread: 123</span>
-      </div>
+        <span>
+          Spread: {spread} ({spreadPercentage.toFixed(2)}%)
+        </span>
+      </HeaderInfo>
       <Container>
         <div style={{ width: '100%' }}>
           <Header>
