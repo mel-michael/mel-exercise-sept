@@ -1,11 +1,18 @@
 import { useEffect } from 'react';
 
-import { useAppDispatch, useAppSelector } from './redux/index';
-import { Contract, EventType, FeedType } from './redux/orderbook/types';
-import { update } from './redux/wsconnection/slice';
+// components
+import Trade from './pages/trade';
+
+// store & types
 import { upsert } from './redux/orderbook/slice';
+import { update } from './redux/wsconnection/slice';
+import { useAppDispatch, useAppSelector } from './redux';
+import { Contract, EventType, FeedType } from './redux/orderbook/types';
+
+// utils
 import { WS, initConnection } from './utils/ws';
 
+// styles
 import './App.scss';
 
 const dataFeedUrl = process.env.REACT_APP_DATA_FEED;
@@ -65,6 +72,7 @@ function App() {
           Unsubscribe Message
         </button>
       </header>
+      <Trade />
     </div>
   );
 }
