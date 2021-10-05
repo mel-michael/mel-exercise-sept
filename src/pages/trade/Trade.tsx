@@ -13,6 +13,12 @@ const Row = styled.div`
     padding: 0.2rem 0.5rem;
     text-align: right;
     width: 100%;
+    &.bid {
+      color: green;
+    }
+    &.ask {
+      color: red;
+    }
   }
 `;
 const Header = styled(Row)`
@@ -27,6 +33,7 @@ const Container = styled.div`
   display: flex;
   width: 100%;
 `;
+
 const HeaderInfo = styled.div`
   display: flex;
   justify-content: center;
@@ -55,11 +62,11 @@ const Trade = (): JSX.Element => {
             <span>Size</span>
             <span>Price</span>
           </Header>
-          {asks.map(({ price, size, total }) => (
+          {bids.map(({ price, size, total }) => (
             <Row key={price}>
               <span>{total?.toLocaleString()}</span>
               <span>{size.toLocaleString()}</span>
-              <span>{price.toLocaleString()}</span>
+              <span className="bid">{price.toLocaleString()}</span>
             </Row>
           ))}
         </div>
@@ -69,9 +76,9 @@ const Trade = (): JSX.Element => {
             <span>Size</span>
             <span>Total</span>
           </Header>
-          {bids.map(({ price, size, total }) => (
+          {asks.map(({ price, size, total }) => (
             <Row key={price}>
-              <span>{price.toLocaleString()}</span>
+              <span className="ask">{price.toLocaleString()}</span>
               <span>{size.toLocaleString()}</span>
               <span>{total?.toLocaleString()}</span>
             </Row>

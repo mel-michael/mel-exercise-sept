@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { uniqBy, sortBy } from 'lodash';
+import { uniqBy } from 'lodash';
 
 import { filterPriceLevel, includeCummulative, OrderLevel } from '../../utils/book';
 
@@ -22,19 +22,22 @@ const slice = createSlice({
   initialState,
   reducers: {
     upsert: (state, { payload }) => {
-      const formatBids = includeCummulative(filterPriceLevel(payload.bids));
-      const formatAsks = includeCummulative(filterPriceLevel(payload.asks));
+      const filteredAsks = filterPriceLevel(payload.asks);
+      const filteredBids = filterPriceLevel(payload.bids);
 
-      const updatedAsks = uniqBy(state.asks.concat(formatAsks), ({ price }) => price);
-      const updatedBids = uniqBy(state.bids.concat(formatBids), ({ price }) => price);
+      const updatedAsks = uniqBy(state.asks.concat(filteredAsks), ({ price }) => price);
+      const updatedBids = uniqBy(state.asks.concat(filteredBids), ({ price }) => price);
 
-      const sortedAsks = sortBy(updatedAsks, ({ price }) => price);
-      const sortedBids = sortBy(updatedBids, ({ price }) => price).reverse();
+      const formatAsks = includeCummulative(state.asks.concat(updatedAsks));
+      const formatBids = includeCummulative(state.bids.concat(updatedBids));
+
+      const sortedAsks = uniqBy(formatAsks, ({ price }) => price);
+      const sortedBids = uniqBy(formatBids, ({ price }) => price);
 
       const lowestAsk = sortedAsks[0].price || 0;
       const highestBid = sortedBids[0].price || 0;
 
-      const spread = highestBid - lowestAsk;
+      const spread = Math.abs(highestBid - lowestAsk);
       const midpoint = (lowestAsk + highestBid) / 2;
 
       const spreadPercentage = (spread / midpoint) * 100;
