@@ -1,12 +1,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { uniqBy } from 'lodash';
 
+import { ProductIds } from './types';
 import { filterPriceLevel, includeCummulative, OrderLevel } from '../../utils/book';
 
 type OrderBookState = {
   asks: OrderLevel[];
   bids: OrderLevel[];
   spread: number;
+  productId: ProductIds;
   spreadPercentage: number;
 };
 
@@ -14,7 +16,8 @@ const initialState: OrderBookState = {
   asks: [],
   bids: [],
   spread: 0,
-  spreadPercentage: 0
+  spreadPercentage: 0,
+  productId: 'PI_XBTUSD'
 };
 
 const slice = createSlice({
@@ -44,10 +47,11 @@ const slice = createSlice({
 
       return {
         ...state,
+        spread,
         asks: sortedAsks,
         bids: sortedBids,
-        spread,
-        spreadPercentage
+        spreadPercentage,
+        productId: payload.product_id
       };
     }
   }

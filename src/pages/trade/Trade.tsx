@@ -6,13 +6,14 @@ import { Row, Header, HeaderInfo, Container, Spread } from './Trade.styled';
 
 const Trade = (): JSX.Element => {
   const isMobileScreen = window.matchMedia('(max-width: 480px)').matches;
-  const { asks, bids, spread, spreadPercentage } = useAppSelector((state) => state.orderbook);
+  const { asks, bids, productId, spread, spreadPercentage } = useAppSelector((state) => state.orderbook);
   const updatedAsks = isMobileScreen ? [...asks].reverse() : asks;
 
   return (
     <>
       <HeaderInfo>
         <span>Order Book</span>
+        <span>{productId}</span>
         <span className="d-none d-sm-inline">
           Spread: {spread} ({spreadPercentage.toFixed(2)}%)
         </span>

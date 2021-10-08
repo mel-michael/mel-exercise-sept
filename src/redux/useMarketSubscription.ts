@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { WS } from '../utils/ws';
 import { useAppDispatch } from './hooks';
-import { Contract, EventType, ProductIds, FeedType } from './orderbook/types';
+import { Contract, EventType, Products, FeedType, ProductIds } from './orderbook/types';
 
 type MarketProps = {
   event: EventType;
