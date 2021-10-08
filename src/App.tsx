@@ -60,9 +60,9 @@ function App() {
   return (
     <div className="App">
       <header>
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
+        <h3 className="py-3">
+          Just Another Order Book App
+        </h3>
         <pre>You are {connected ? 'now' : 'NOT'} connected</pre>
 
         <button type="button" onClick={sendMessage}>
