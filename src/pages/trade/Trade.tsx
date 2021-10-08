@@ -14,19 +14,20 @@ const Row = styled.div`
     text-align: right;
     width: 100%;
     &.bid {
-      color: green;
+      color: #35be53;
     }
     &.ask {
-      color: red;
+      color: #e22336;
     }
   }
 `;
 const Header = styled(Row)`
   font-weight: bold;
   margin-top: 1rem;
+  color: #98a6af;
   text-transform: uppercase;
-  border-top: 1px solid #333;
-  border-bottom: 1px solid #ccc;
+  border-top: 1px solid #a1a1a1;
+  border-bottom: 1px solid #424242;
 `;
 
 const Container = styled.div`
@@ -42,6 +43,7 @@ const HeaderInfo = styled.div`
   margin-top: 2rem;
   & span {
     padding: 0 1rem;
+    color: #98a6af;
   }
 `;
 
