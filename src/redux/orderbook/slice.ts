@@ -1,38 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { uniqBy } from 'lodash';
 
-import { ProductIds } from './types';
-import { filterPriceLevel, includeCummulative, OrderLevel } from '../../utils/book';
+import { ProductIds, OrderPayload, OrderBookMap } from './types';
+import { filterPriceLevel, includeCummulative } from '../../utils/book';
 
-type OrderBookState = {
-  asks: OrderLevel[];
-  bids: OrderLevel[];
-  spread: number;
-  productId: ProductIds;
-  spreadPercentage: number;
-};
+export type OrderBookState = OrderBookMap & { activeProduct: ProductIds };
 
-const initialState: OrderBookState = {
-  asks: [],
-  bids: [],
-  spread: 0,
-  spreadPercentage: 0,
-  productId: 'PI_XBTUSD'
-};
+const initialState = { activeProduct: 'PI_XBTUSD' } as OrderBookState;
 
 const slice = createSlice({
   name: 'orderbook',
   initialState,
   reducers: {
-    upsert: (state, { payload }) => {
+    upsert: (state, { payload }: { payload: OrderPayload }) => {
+      const productId = payload.product_id;
+      const product = state[productId] || { asks: [], bids: [] };
       const filteredAsks = filterPriceLevel(payload.asks);
       const filteredBids = filterPriceLevel(payload.bids);
 
-      const updatedAsks = uniqBy(state.asks.concat(filteredAsks), ({ price }) => price);
-      const updatedBids = uniqBy(state.asks.concat(filteredBids), ({ price }) => price);
+      const updatedAsks = uniqBy(product.asks.concat(filteredAsks), ({ price }) => price);
+      const updatedBids = uniqBy(product.bids.concat(filteredBids), ({ price }) => price);
 
-      const formatAsks = includeCummulative(state.asks.concat(updatedAsks));
-      const formatBids = includeCummulative(state.bids.concat(updatedBids));
+      const formatAsks = includeCummulative(product.asks.concat(updatedAsks));
+      const formatBids = includeCummulative(product.bids.concat(updatedBids));
 
       const sortedAsks = uniqBy(formatAsks, ({ price }) => price);
       const sortedBids = uniqBy(formatBids, ({ price }) => price);
@@ -47,11 +37,15 @@ const slice = createSlice({
 
       return {
         ...state,
-        spread,
-        asks: sortedAsks,
-        bids: sortedBids,
-        spreadPercentage,
-        productId: payload.product_id
+        [productId]: {
+          ...state[productId],
+          asks: sortedAsks,
+          bids: sortedBids,
+          spreadPercentage,
+          productId,
+          spread
+        },
+        activeProduct: productId
       };
     }
   }

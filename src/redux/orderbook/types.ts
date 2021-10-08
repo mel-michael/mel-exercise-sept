@@ -17,7 +17,7 @@ export enum EventType {
 
 export enum FeedType {
   book_ui_1 = 'book_ui_1',
-  book_ui_2 = 'book_ui_2'
+  book_ui_1_snapshot = 'book_ui_1_snapshot'
 }
 
 export type Contract = {
@@ -25,3 +25,23 @@ export type Contract = {
   feed: FeedType;
   product_ids: ProductIds[];
 };
+
+export type OrderLevel = {
+  price: number;
+  size: number;
+  total: number;
+};
+
+export type PriceAndSize = number[];
+
+export type OrderBook = {
+  asks: OrderLevel[];
+  bids: OrderLevel[];
+  spread: number;
+  productId: ProductIds;
+  spreadPercentage: number;
+};
+
+export type OrderBookMap = Record<ProductIds, OrderBook>;
+
+export type OrderPayload = { feed: FeedType; product_id: ProductIds; bids: PriceAndSize[]; asks: PriceAndSize[] };

@@ -51,7 +51,7 @@ const message: Contract = {
 
 function App() {
   const dispatch = useAppDispatch();
-  const { productId } = useAppSelector((state) => state.orderbook);
+  const { activeProduct } = useAppSelector((state) => state.orderbook);
   const { connected } = useAppSelector((state) => state.wsconnection);
 
   useEffect(() => {
@@ -82,14 +82,18 @@ function App() {
   };
   const toggleFeed = () => {
     unsubscribeMessage();
-    const newProdId = productId === 'PI_XBTUSD' ? 'PI_ETHUSD' : 'PI_XBTUSD';
+    const newProdId = activeProduct === 'PI_XBTUSD' ? 'PI_ETHUSD' : 'PI_XBTUSD';
     const msg: Contract = { ...message, product_ids: [newProdId] };
     WS.send(JSON.stringify(msg));
   };
 
+  console.log('MES', activeProduct)
+
   const unsubscribeMessage = () => {
-    const msg: Contract = { ...message, product_ids: [productId] };
+    const msg: Contract = { ...message, product_ids: [activeProduct] };
     msg.event = EventType.UNSUBSCRIBE;
+
+    console.log('MES', msg)
 
     WS.send(JSON.stringify(msg));
   };

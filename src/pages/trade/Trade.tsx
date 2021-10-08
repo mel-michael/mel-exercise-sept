@@ -1,12 +1,15 @@
 // store
 import { useAppSelector } from '../../redux';
+import { ordersByProduct } from '../../redux/orderbook/selectors';
 
 // styles
 import { Row, Header, HeaderInfo, Container, Spread } from './Trade.styled';
 
 const Trade = (): JSX.Element => {
   const isMobileScreen = window.matchMedia('(max-width: 480px)').matches;
-  const { asks, bids, productId, spread, spreadPercentage } = useAppSelector((state) => state.orderbook);
+  const { activeProduct } = useAppSelector((state) => state.orderbook);
+  const order = useAppSelector(ordersByProduct(activeProduct));
+  const { asks = [], bids = [], productId, spread, spreadPercentage } = order || {};
   const updatedAsks = isMobileScreen ? [...asks].reverse() : asks;
 
   return (
@@ -15,7 +18,7 @@ const Trade = (): JSX.Element => {
         <span>Order Book</span>
         <span>{productId}</span>
         <span className="d-none d-sm-inline">
-          Spread: {spread} ({spreadPercentage.toFixed(2)}%)
+          Spread: {spread.toFixed(2)} ({spreadPercentage.toFixed(2)}%)
         </span>
       </HeaderInfo>
       <Container>
@@ -49,7 +52,7 @@ const Trade = (): JSX.Element => {
             </Row>
           ))}
           <Spread>
-            Spread: {spread} ({spreadPercentage.toFixed(2)}%)
+            Spread: {spread.toFixed(2)} ({spreadPercentage?.toFixed(2)}%)
           </Spread>
         </div>
       </Container>
