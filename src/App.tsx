@@ -87,11 +87,13 @@ function App() {
   }, [connected, dispatch]);
 
   useEffect(() => {
-    document.addEventListener('visibilitychange', () => {
+    const handleFocusChange = () => {
       if (appRef.current && !document.hidden && connected) {
         disconnectOrderBook();
       }
-    });
+    };
+    document.addEventListener('onFocusChange', handleFocusChange);
+    return () => document.removeEventListener('onFocusChange', handleFocusChange);
   }, [appRef, connected]);
 
   const sendMessage = () => {
@@ -106,7 +108,7 @@ function App() {
     WS.send(JSON.stringify(msg));
   };
 
-  console.log('MESSAGE', activeProduct);
+  console.log('PRODID', activeProduct);
 
   const unsubscribeMessage = () => {
     const msg: Contract = { ...message, product_ids: [activeProduct] };
