@@ -1,9 +1,9 @@
-export enum Products {
+export enum MarketList {
   PI_XBTUSD,
   PI_ETHUSD
 }
 
-export type ProductIds = keyof typeof Products;
+export type Markets = keyof typeof MarketList;
 
 export enum OrderSide {
   BUY = 'Buy',
@@ -23,7 +23,7 @@ export enum FeedType {
 export type Contract = {
   event: EventType;
   feed: FeedType;
-  product_ids: ProductIds[];
+  product_ids: Markets[];
 };
 
 export type OrderLevel = {
@@ -38,10 +38,10 @@ export type OrderBook = {
   asks: OrderLevel[];
   bids: OrderLevel[];
   spread: number;
-  productId: ProductIds;
+  productId: Markets;
   spreadPercentage: number;
 };
 
-export type OrderBookMap = Record<ProductIds, OrderBook>;
+export type OrderBookMap = Record<Markets, OrderBook>;
 
-export type OrderPayload = { feed: FeedType; product_id: ProductIds; bids: PriceAndSize[]; asks: PriceAndSize[] };
+export type OrderPayload = { feed: FeedType; product_id: Markets; bids: PriceAndSize[]; asks: PriceAndSize[] };

@@ -1,10 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { uniqBy } from 'lodash';
 
-import { ProductIds, OrderPayload, OrderBookMap } from './types';
+import { Markets, OrderPayload, OrderBookMap } from './types';
 import { filterPriceLevel, includeCummulative } from '../../utils/book';
 
-export type OrderBookState = OrderBookMap & { activeProduct: ProductIds };
+export type OrderBookState = OrderBookMap & { activeProduct: Markets };
 
 const initialState = { activeProduct: 'PI_XBTUSD' } as OrderBookState;
 

@@ -2,11 +2,11 @@ import { useEffect } from 'react';
 
 import { WS } from '../utils/ws';
 import { useAppDispatch } from './hooks';
-import { Contract, EventType, Products, FeedType, ProductIds } from './orderbook/types';
+import { Contract, EventType, FeedType, Markets } from './orderbook/types';
 
 type MarketProps = {
   event: EventType;
-  productId: ProductIds;
+  productId: Markets;
 };
 
 export const useMarketSubscriptions = ({ event, productId }: MarketProps): void => {

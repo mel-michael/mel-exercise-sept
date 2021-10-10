@@ -1,6 +1,6 @@
 import { createSelector, Selector } from '@reduxjs/toolkit';
 
-import { OrderBook, ProductIds } from './types';
+import { OrderBook, Markets } from './types';
 import { OrderBookState } from './slice';
 import { RootState } from '../store';
 
@@ -10,5 +10,5 @@ export type OrderBookSelector = Selector<RootState, OrderBookState>;
 
 export const ordersSelector: OrderBookSelector = (state) => state.orderbook;
 
-export const ordersByProduct = (id: ProductIds): OrdersSelector =>
+export const ordersByProduct = (id: Markets): OrdersSelector =>
   createSelector(ordersSelector, (orders) => orders[id]);
