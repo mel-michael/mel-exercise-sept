@@ -1,14 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 // components
 import Trade from './pages/trade';
+import Modal from './components/Modal';
 
 // store & types
 import { upsert } from './redux/orderbook/slice';
 import { update } from './redux/wsconnection/slice';
 import { useAppDispatch, useAppSelector } from './redux';
-import { Contract, EventType, FeedType, Products } from './redux/orderbook/types';
+import { Contract, EventType, FeedType } from './redux/orderbook/types';
 
 // utils
 import { WS, initConnection } from './utils/ws';
@@ -51,24 +52,32 @@ const message: Contract = {
 
 function App() {
   const dispatch = useAppDispatch();
-  const { activeProduct } = useAppSelector((state) => state.orderbook);
+  const appRef = useRef<HTMLDivElement>(null);
+  const [showModal, setShowModal] = useState(true);
   const { connected } = useAppSelector((state) => state.wsconnection);
+  const { activeProduct } = useAppSelector((state) => state.orderbook);
+
+  const connectToOrderBook = (url: string) => {
+    initConnection({
+      url,
+      onOpen: () => {
+        dispatch(update({ connected: true }));
+      },
+      onClose: () => {
+        dispatch(update({ connected: false }));
+      }
+    });
+  };
+
+  const disconnectOrderBook = () => {
+    console.log(':::: DISCONNNECTED ::::');
+    WS.close(1000, 'Disconnect');
+    setShowModal(true);
+  };
 
   useEffect(() => {
-    if (!connected && dataFeedUrl) {
-      initConnection({
-        url: dataFeedUrl,
-        onOpen: () => {
-          dispatch(update({ connected: true }));
-        },
-        onClose: () => {
-          dispatch(update({ connected: false }));
-        }
-      });
-    }
     if (connected) {
       WS.onmessage = (event) => {
-        console.log(`[message] Data received from server`, event.data);
         const feeds = JSON.parse(event.data);
         if (feeds.asks || feeds.bids) {
           dispatch(upsert(feeds));
@@ -77,9 +86,19 @@ function App() {
     }
   }, [connected, dispatch]);
 
+  useEffect(() => {
+    document.addEventListener('visibilitychange', () => {
+      if (appRef.current && !document.hidden && connected) {
+        disconnectOrderBook();
+      }
+    });
+  }, [appRef, connected]);
+
   const sendMessage = () => {
-    WS.send(JSON.stringify(message));
+    const msg: Contract = { ...message, product_ids: [activeProduct] };
+    WS.send(JSON.stringify(msg));
   };
+
   const toggleFeed = () => {
     unsubscribeMessage();
     const newProdId = activeProduct === 'PI_XBTUSD' ? 'PI_ETHUSD' : 'PI_XBTUSD';
@@ -87,35 +106,74 @@ function App() {
     WS.send(JSON.stringify(msg));
   };
 
-  console.log('MES', activeProduct)
+  console.log('MESSAGE', activeProduct);
 
   const unsubscribeMessage = () => {
     const msg: Contract = { ...message, product_ids: [activeProduct] };
     msg.event = EventType.UNSUBSCRIBE;
 
-    console.log('MES', msg)
+    console.log('MES', msg);
 
     WS.send(JSON.stringify(msg));
   };
 
   return (
-    <div className="App">
-      <header>
-        <h3 className="py-3">Just Another Order Book App</h3>
-        <pre>You are {connected ? 'now' : 'NOT'} connected</pre>
+    <>
+      {showModal && (
+        <Modal>
+          <div className="text-center">
+            <h3 className="py-3">Welcome</h3>
+            <pre
+              style={{ maxWidth: 400 }}
+              className={`mx-auto p-2 alert ${connected ? 'alert-success' : 'alert-danger'}`}
+            >
+              You are {connected ? 'now' : 'NOT'} connected
+            </pre>
 
-        <button type="button" onClick={sendMessage}>
-          Send message
-        </button>
-        <button type="button" onClick={unsubscribeMessage}>
-          Unsubscribe Message
-        </button>
-      </header>
-      <Trade />
-      <ToggleDiv>
-        <ToggleButton onClick={toggleFeed}>Toggle Feed</ToggleButton>
-      </ToggleDiv>
-    </div>
+            <div className="form-check form-switch my-3 d-flex justify-content-center">
+              <input
+                className="form-check-input me-2"
+                type="checkbox"
+                role="switch"
+                id="connect"
+                onChange={() => {
+                  if (!connected && dataFeedUrl) {
+                    connectToOrderBook(dataFeedUrl);
+                  }
+                  if (connected) {
+                    disconnectOrderBook();
+                  }
+                }}
+                checked={connected}
+                style={{ cursor: 'pointer' }}
+              />
+              <label className="form-check-label" htmlFor="connect">
+                Click to {connected ? 'Disconnect' : 'Connect'}
+              </label>
+            </div>
+
+            <button
+              type="button"
+              disabled={!connected}
+              className="btn btn-dark mt-2 mb-3"
+              onClick={() => {
+                setShowModal(false);
+                sendMessage();
+              }}
+            >
+              View Order Book
+            </button>
+          </div>
+        </Modal>
+      )}
+      <div className="App" ref={appRef}>
+        <h3 className="py-3">Just Another Order Book App</h3>
+        <Trade />
+        <ToggleDiv>
+          <ToggleButton onClick={toggleFeed}>Toggle Feed</ToggleButton>
+        </ToggleDiv>
+      </div>
+    </>
   );
 }
 

@@ -9,7 +9,7 @@ const Trade = (): JSX.Element => {
   const isMobileScreen = window.matchMedia('(max-width: 480px)').matches;
   const { activeProduct } = useAppSelector((state) => state.orderbook);
   const order = useAppSelector(ordersByProduct(activeProduct));
-  const { asks = [], bids = [], productId, spread, spreadPercentage } = order || {};
+  const { asks = [], bids = [], productId, spread = 0, spreadPercentage = 0 } = order || {};
   const updatedAsks = isMobileScreen ? [...asks].reverse() : asks;
 
   return (
